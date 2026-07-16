@@ -1,0 +1,12 @@
+{
+  "name": "a1-health-check",
+  "version": "1.0.0",
+  "description": "A1 Group Health-Check Web Application",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx -y live-server ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

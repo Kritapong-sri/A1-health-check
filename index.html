@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="แบบประเมินสุขภาพใจของทีม A1 ในธีมสวนสัตว์ป่าสุดน่ารัก มาร่วมแชร์พลังใจกันเถอะ!">
+  <title>A1 Health Quest | เควสสำรวจพลังใจกลุ่ม</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Itim&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- html2canvas for card generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Falling Jungle Leaves Background -->
+  <canvas id="leaf-canvas"></canvas>
+
+  <!-- Hanging Vines & Jungle Background Decorations -->
+  <div class="bg-decorations">
+    <!-- Left Jungle Tree -->
+    <div class="bg-tree-left">
+      <svg viewBox="0 0 32 32" width="100%" height="100%">
+        <!-- Trunk -->
+        <path d="M14,20 h4 v12 h-4 z M13,24 h1 v8 h-1 z M18,24 h1 v8 h-1 z" fill="#5D4037" />
+        <path d="M15,20 h2 v12 h-2 z" fill="#8D6E63" />
+        <!-- Foliage (Green Jungle Leaves) -->
+        <path d="M6,10 h20 v10 h-20 z M4,12 h24 v6 h-24 z M8,6 h16 v4 h-16 z M12,2 h8 v4 h-8 z" fill="#388E3C" />
+        <path d="M8,11 h16 v7 h-16 z M10,7 h12 v4 h-12 z" fill="#4CAF50" />
+        <!-- Hanging Vines / Banana Accents (Yellow) -->
+        <rect x="5" y="14" width="2" height="4" fill="#FBC02D" />
+        <rect x="25" y="14" width="2" height="4" fill="#FBC02D" />
+        <rect x="15" y="8" width="2" height="2" fill="#FBC02D" />
+        <!-- Highlights -->
+        <rect x="7" y="5" width="2" height="1" fill="#C8E6C9" />
+        <rect x="19" y="5" width="2" height="1" fill="#C8E6C9" />
+        <rect x="11" y="3" width="2" height="1" fill="#C8E6C9" />
+      </svg>
+    </div>
+    <!-- Right Jungle Tree -->
+    <div class="bg-tree-right">
+      <svg viewBox="0 0 32 32" width="100%" height="100%">
+        <!-- Trunk -->
+        <path d="M14,20 h4 v12 h-4 z M13,24 h1 v8 h-1 z M18,24 h1 v8 h-1 z" fill="#5D4037" />
+        <path d="M15,20 h2 v12 h-2 z" fill="#8D6E63" />
+        <!-- Foliage (Green Jungle Leaves) -->
+        <path d="M6,10 h20 v10 h-20 z M4,12 h24 v6 h-24 z M8,6 h16 v4 h-16 z M12,2 h8 v4 h-8 z" fill="#388E3C" />
+        <path d="M8,11 h16 v7 h-16 z M10,7 h12 v4 h-12 z" fill="#4CAF50" />
+        <!-- Bananas -->
+        <rect x="6" y="13" width="2" height="3" fill="#FBC02D" />
+        <rect x="24" y="13" width="2" height="3" fill="#FBC02D" />
+        <!-- Highlights -->
+        <rect x="7" y="5" width="2" height="1" fill="#C8E6C9" />
+        <rect x="19" y="5" width="2" height="1" fill="#C8E6C9" />
+      </svg>
+    </div>
+  </div>
+
+  <!-- Hanging Vine Decor Overlay at the top of the viewport -->
+  <div class="top-vines-overlay"></div>
+
+  <div class="app-container">
+    <!-- Header Area -->
+    <header class="app-header pixel-box wood-box">
+      <div class="header-content">
+        <!-- Logo Image -->
+        <div class="logo-container">
+          <img src="logo.jpg" alt="A1 Logo" class="app-logo">
+        </div>
+        <h1 class="pixel-title"><span class="jungle-icon">🌿</span> A1 HEALTH QUEST <span class="jungle-icon">🌿</span></h1>
+        <div class="audio-control">
+          <button id="btn-audio-toggle" class="pixel-btn small-btn wood-btn" aria-label="Toggle Sound">
+            <span id="audio-icon">🔊</span> เสียง: เปิด
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Progress Bar (Jungle XP Bar) -->
+    <div class="progress-bar-container pixel-box wood-box">
+      <div class="progress-label">ความคืบหน้าเควส: <span id="progress-text">ขั้นตอนที่ 1/4</span></div>
+      <div class="progress-bar-outer">
+        <div id="progress-bar-inner" class="progress-bar-inner" style="width: 25%;"></div>
+      </div>
+    </div>
+
+    <!-- Main Game Window -->
+    <main class="game-window pixel-box dirt-box">
+
+      <!-- STEP 1: Avatar Customization -->
+      <section id="step-1" class="step-section active">
+        <h2 class="step-title">[STAGE 1] แต่งตัวหมูของคุณ</h2>
+        <p class="step-subtitle">ตั้งชื่อเล่นและออกแบบอวาตาร์หมูของตัวเองเพื่อเข้าร่วมเควสครั้งนี้!</p>
+
+        <div class="form-group">
+          <label for="input-nickname" class="pixel-label">ชื่อเล่นของคุณ (Nickname)</label>
+          <input type="text" id="input-nickname" class="pixel-input" placeholder="ใส่ชื่อเล่นตรงนี้..." maxlength="15" autocomplete="off" required>
+        </div>
+
+        <!-- Customizer Panel -->
+        <div class="customizer-panel pixel-box wood-box inner-box">
+          <!-- Left Column: Avatar Preview -->
+          <div class="preview-column">
+            <div class="custom-avatar-preview" id="custom-avatar-preview-box">
+              <!-- Dynamically composed SVG will go here -->
+            </div>
+            <div class="avatar-title-label">ผู้กล้าหมูป่า A1</div>
+          </div>
+
+          <!-- Right Column: Controls -->
+          <div class="controls-column">
+            <!-- Tab buttons -->
+            <div class="customizer-tabs">
+              <button type="button" class="tab-btn active" data-tab="hat">🎩 หมวก/ผม</button>
+              <button type="button" class="tab-btn" data-tab="outfit">🧥 เสื้อผ้า</button>
+              <button type="button" class="tab-btn" data-tab="acc">🦜 ของแต่ง</button>
+            </div>
+
+            <!-- Tab Content: Hat/Hair -->
+            <div class="tab-content active" id="tab-hat">
+              <div class="options-grid">
+                <button type="button" class="option-btn selected" data-category="hat" data-value="none">
+                  <span class="option-preview">🚫</span> ไม่มีหมวก
+                </button>
+                <button type="button" class="option-btn" data-category="hat" data-value="safari_hat">
+                  <span class="option-preview">🤠</span> หมวกซาฟารี
+                </button>
+                <button type="button" class="option-btn" data-category="hat" data-value="curly_yellow">
+                  <span class="option-preview">💇‍♂️</span> ผมบลอนด์หยิก
+                </button>
+                <button type="button" class="option-btn" data-category="hat" data-value="gold_hair">
+                  <span class="option-preview">👱‍♂️</span> ผมทองสุดเท่
+                </button>
+                <button type="button" class="option-btn" data-category="hat" data-value="sunglasses">
+                  <span class="option-preview">😎</span> แว่นกันแดด
+                </button>
+                <button type="button" class="option-btn" data-category="hat" data-value="cookie_hat">
+                  <span class="option-preview">🍪</span> หมวกคุกกี้
+                </button>
+              </div>
+            </div>
+
+            <!-- Tab Content: Outfits -->
+            <div class="tab-content" id="tab-outfit">
+              <div class="options-grid">
+                <button type="button" class="option-btn selected" data-category="outfit" data-value="none">
+                  <span class="option-preview">🚫</span> ไม่มีชุด
+                </button>
+                <button type="button" class="option-btn" data-category="outfit" data-value="safari_uniform">
+                  <span class="option-preview">🦺</span> ชุดซาฟารี
+                </button>
+                <button type="button" class="option-btn" data-category="outfit" data-value="red_hoodie">
+                  <span class="option-preview">🧣</span> เสื้อฮู้ดแดง
+                </button>
+                <button type="button" class="option-btn" data-category="outfit" data-value="cute_overalls">
+                  <span class="option-preview">👖</span> เอี๊ยมฟ้าน่ารัก
+                </button>
+                <button type="button" class="option-btn" data-category="outfit" data-value="vine_scarf">
+                  <span class="option-preview">🌿</span> ผ้าพันคอเถาวัลย์
+                </button>
+                <button type="button" class="option-btn" data-category="outfit" data-value="cookie_outfit">
+                  <span class="option-preview">🍪</span> ชุดคุกกี้
+                </button>
+              </div>
+            </div>
+
+            <!-- Tab Content: Accessories -->
+            <div class="tab-content" id="tab-acc">
+              <div class="options-grid">
+                <button type="button" class="option-btn selected" data-category="acc" data-value="none">
+                  <span class="option-preview">🚫</span> ไม่มีสัตว์เลี้ยง
+                </button>
+                <button type="button" class="option-btn" data-category="acc" data-value="parrot">
+                  <span class="option-preview">🦜</span> นกแก้วป่าคู่ใจ
+                </button>
+                <button type="button" class="option-btn" data-category="acc" data-value="banana">
+                  <span class="option-preview">🍌</span> กล้วยป่าห้อยท้าย
+                </button>
+                <button type="button" class="option-btn" data-category="acc" data-value="bee">
+                  <span class="option-preview">🐝</span> ผึ้งน้อยบินวน
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="step-navigation">
+          <div></div> <!-- Space helper -->
+          <button type="button" id="btn-go-to-step-2" class="pixel-btn primary-btn wood-btn">เริ่มเควส! [START]</button>
+        </div>
+      </section>
+
+      <!-- STEP 2: Heart Self-Rating (100 Hearts) -->
+      <section id="step-2" class="step-section">
+        <h2 class="step-title">[STAGE 2] เติมพลังใจของคุณ (1-100)</h2>
+        <p class="step-subtitle">ในช่วงนี้พลังชีวิตและพลังใจของพวกแกอยู่ที่เท่าไหร่กัน</p>
+        <p class="step-subtitle">ลองลากหรือกดที่รูปหัวใจเพื่อเติมพลังพลังใจกันได้เลยยยย (จิ้มค้างแล้วรูดได้นะะ!)</p>
+
+        <div class="heart-container-box pixel-box wood-box inner-box">
+          <div class="score-display wood-box">
+            <span class="score-number" id="heart-score">50</span> <span class="score-unit">/ 100</span>
+          </div>
+
+          <!-- Heart Grid (10x10) will be generated by JS -->
+          <div id="heart-grid" class="heart-grid" aria-label="Heart rating grid of 100 hearts"></div>
+
+          <div class="score-status-box wood-box">
+            <p id="score-status-desc" class="score-status-desc">อยู่ในเกณฑ์ปานกลาง สู้ๆ นะ!</p>
+          </div>
+        </div>
+
+        <div class="step-navigation">
+          <button type="button" class="pixel-btn prev-btn btn-prev wood-btn">[&lt;&lt;] ย้อนกลับ</button>
+          <button type="button" id="btn-go-to-step-3" class="pixel-btn primary-btn wood-btn">ถัดไป [&gt;&gt;]</button>
+        </div>
+      </section>
+
+      <!-- STEP 3: Quest Form (Questions) -->
+      <section id="step-3" class="step-section">
+        <h2 class="step-title">[STAGE 3] ตอบคำถามคัดเลือก</h2>
+        <p class="step-subtitle">ตอบคำถามสั้นๆ เพื่อให้หัวหน้าฝ่ายและเพื่อนๆ เข้าใจและสนับสนุนแกได้ดียิ่งขึ้น</p>
+
+        <!-- Question 1 -->
+        <div class="quest-card pixel-box wood-box inner-box">
+          <div class="quest-number">QUEST 01</div>
+          <label for="textarea-future" class="pixel-label quest-question">
+            1 ปี ในการทำงานที่ "A1" แกอยากเห็นตัวเองเติบโตหรือเป็นยังไงบ้าง?
+          </label>
+          <textarea id="textarea-future" class="pixel-textarea" placeholder="เขียนความฝันหรือเป้าหมายที่อยากไปให้ถึง..." rows="3" required></textarea>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="quest-card pixel-box wood-box inner-box">
+          <div class="quest-number">QUEST 02</div>
+          <label for="textarea-needs" class="pixel-label quest-question">
+            มีอะไรที่แกอยากได้เพิ่ม หรืออยากได้รับการช่วยเหลือสนับสนุนจากทีมบ้างไหม?
+          </label>
+          <textarea id="textarea-needs" class="pixel-textarea" placeholder="เช่น อุปกรณ์การทำงาน การสอนงาน หรือบรรยากาศการทำงาน..." rows="3" required></textarea>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="quest-card pixel-box wood-box inner-box">
+          <div class="quest-number">QUEST 03</div>
+          <label class="pixel-label quest-question">
+            ตอนนี้แกรู้สึกไหวกับงานและชีวิตช่วงนี้ไหม?
+          </label>
+          <div class="mood-selection">
+            <button type="button" class="mood-btn" data-mood="cry">
+              <span class="mood-emoji">
+                <svg viewBox="0 0 16 16" width="32" height="32" class="mood-svg">
+                  <path d="M6,1 h4 v1 h-4 z M4,2 h2 v1 h-2 z M10,2 h2 v1 h-2 z M3,3 h1 v2 h-1 z M12,3 h1 v2 h-1 z M2,5 h1 v6 h-1 z M13,5 h1 v6 h-1 z M3,11 h1 v2 h-1 z M12,11 h1 v2 h-1 z M4,13 h2 v1 h-2 z M10,13 h2 v1 h-2 z M6,14 h4 v1 h-4 z" fill="#3C2F2F" />
+                  <path d="M6,2 h4 v1 h-4 z M4,3 h2 v1 h-2 z M10,3 h2 v1 h-2 z M3,5 h10 v6 h-10 z M4,11 h8 v2 h-8 z M6,13 h4 v1 h-4 z" fill="#42A5F5" />
+                  <path d="M11,4 h1 v7 h-1 z M10,11 h1 v1 h-1 z M7,12 h3 v1 h-3 z M5,12 h2 v1 h-2 z M9,11 h1 v1 h-1 z" fill="#1565C0" opacity="0.3" />
+                  <rect x="5" y="5" width="2" height="2" fill="#3C2F2F" />
+                  <rect x="9" y="5" width="2" height="2" fill="#3C2F2F" />
+                  <rect x="5" y="9" width="6" height="1" fill="#FFFFFF" />
+                  <path d="M9,9 h2 v3 h-2 z" fill="#90CAF9" />
+                  <path d="M10,10 h1 v2 h-1 z" fill="#64B5F6" />
+                </svg>
+              </span>
+              <span class="mood-text">ไม่ไหวแล้ว</span>
+            </button>
+            <button type="button" class="mood-btn" data-mood="tired">
+              <span class="mood-emoji">
+                <svg viewBox="0 0 16 16" width="32" height="32" class="mood-svg">
+                  <path d="M6,1 h4 v1 h-4 z M4,2 h2 v1 h-2 z M10,2 h2 v1 h-2 z M3,3 h1 v2 h-1 z M12,3 h1 v2 h-1 z M2,5 h1 v6 h-1 z M13,5 h1 v6 h-1 z M3,11 h1 v2 h-1 z M12,11 h1 v2 h-1 z M4,13 h2 v1 h-2 z M10,13 h2 v1 h-2 z M6,14 h4 v1 h-4 z" fill="#3C2F2F" />
+                  <path d="M6,2 h4 v1 h-4 z M4,3 h2 v1 h-2 z M10,3 h2 v1 h-2 z M3,5 h10 v6 h-10 z M4,11 h8 v2 h-8 z M6,13 h4 v1 h-4 z" fill="#FFB74D" />
+                  <path d="M11,4 h1 v7 h-1 z M10,11 h1 v1 h-1 z M7,12 h3 v1 h-3 z M5,12 h2 v1 h-2 z" fill="#E65100" opacity="0.25" />
+                  <path d="M4,5 h2 v1 h-2 z M5,6 h1 v2 h-1 z M10,5 h2 v1 h-2 z M10,6 h1 v2 h-1 z" fill="#3C2F2F" />
+                  <path d="M6,11 h4 v1 h-4 z M5,10 h1 v1 h-1 z M10,10 h1 v1 h-1 z" fill="#3C2F2F" />
+                </svg>
+              </span>
+              <span class="mood-text">เหนื่อยล้า</span>
+            </button>
+            <button type="button" class="mood-btn active" data-mood="ok">
+              <span class="mood-emoji">
+                <svg viewBox="0 0 16 16" width="32" height="32" class="mood-svg">
+                  <path d="M6,1 h4 v1 h-4 z M4,2 h2 v1 h-2 z M10,2 h2 v1 h-2 z M3,3 h1 v2 h-1 z M12,3 h1 v2 h-1 z M2,5 h1 v6 h-1 z M13,5 h1 v6 h-1 z M3,11 h1 v2 h-1 z M12,11 h1 v2 h-1 z M4,13 h2 v1 h-2 z M10,13 h2 v1 h-2 z M6,14 h4 v1 h-4 z" fill="#3C2F2F" />
+                  <path d="M6,2 h4 v1 h-4 z M4,3 h2 v1 h-2 z M10,3 h2 v1 h-2 z M3,5 h10 v6 h-10 z M4,11 h8 v2 h-8 z M6,13 h4 v1 h-4 z" fill="#FFD54F" />
+                  <path d="M11,4 h1 v7 h-1 z M10,11 h1 v1 h-1 z M7,12 h3 v1 h-3 z M5,12 h2 v1 h-2 z" fill="#F5B041" opacity="0.25" />
+                  <rect x="5" y="6" width="1" height="2" fill="#3C2F2F" />
+                  <rect x="10" y="6" width="1" height="2" fill="#3C2F2F" />
+                  <rect x="3" y="8" width="2" height="1" fill="#FF8FA3" />
+                  <rect x="11" y="8" width="2" height="1" fill="#FF8FA3" />
+                  <path d="M6,10 h4 v1 h-4 z M5,9 h1 v1 h-1 z M10,9 h1 v1 h-1 z" fill="#3C2F2F" />
+                </svg>
+              </span>
+              <span class="mood-text">โอเคอยู่</span>
+            </button>
+            <button type="button" class="mood-btn" data-mood="good">
+              <span class="mood-emoji">
+                <svg viewBox="0 0 16 16" width="32" height="32" class="mood-svg">
+                  <path d="M6,1 h4 v1 h-4 z M4,2 h2 v1 h-2 z M10,2 h2 v1 h-2 z M3,3 h1 v2 h-1 z M12,3 h1 v2 h-1 z M2,5 h1 v6 h-1 z M13,5 h1 v6 h-1 z M3,11 h1 v2 h-1 z M12,11 h1 v2 h-1 z M4,13 h2 v1 h-2 z M10,13 h2 v1 h-2 z M6,14 h4 v1 h-4 z" fill="#3C2F2F" />
+                  <path d="M6,2 h4 v1 h-4 z M4,3 h2 v1 h-2 z M10,3 h2 v1 h-2 z M3,5 h10 v6 h-10 z M4,11 h8 v2 h-8 z M6,13 h4 v1 h-4 z" fill="#FFD54F" />
+                  <path d="M11,4 h1 v7 h-1 z M10,11 h1 v1 h-1 z M7,12 h3 v1 h-3 z" fill="#F5B041" opacity="0.25" />
+                  <rect x="5" y="5" width="2" height="2" fill="#3C2F2F" />
+                  <rect x="9" y="5" width="2" height="2" fill="#3C2F2F" />
+                  <path d="M5,8 h6 v1 h-6 z M5,9 h1 v2 h-1 z M10,9 h1 v2 h-1 z M6,11 h4 v1 h-4 z" fill="#3C2F2F" />
+                  <path d="M6,9 h4 v2 h-4 z" fill="#D32F2F" />
+                  <path d="M6,9 h4 v1 h-4 z" fill="#FFFFFF" />
+                </svg>
+              </span>
+              <span class="mood-text">สบายดี</span>
+            </button>
+            <button type="button" class="mood-btn" data-mood="strong">
+              <span class="mood-emoji">
+                <svg viewBox="0 0 16 16" width="32" height="32" class="mood-svg">
+                  <path d="M6,1 h4 v1 h-4 z M4,2 h2 v1 h-2 z M10,2 h2 v1 h-2 z M3,3 h1 v2 h-1 z M12,3 h1 v2 h-1 z M2,5 h1 v6 h-1 z M13,5 h1 v6 h-1 z M3,11 h1 v2 h-1 z M12,11 h1 v2 h-1 z M4,13 h2 v1 h-2 z M10,13 h2 v1 h-2 z M6,14 h4 v1 h-4 z" fill="#3C2F2F" />
+                  <path d="M6,2 h4 v1 h-4 z M4,3 h2 v1 h-2 z M10,3 h2 v1 h-2 z M3,5 h10 v6 h-10 z M4,11 h8 v2 h-8 z M6,13 h4 v1 h-4 z" fill="#FFD54F" />
+                  <path d="M11,4 h1 v7 h-1 z M10,11 h1 v1 h-1 z M7,12 h3 v1 h-3 z M5,12 h2 v1 h-2 z" fill="#F5B041" opacity="0.25" />
+                  <path d="M3,5 h10 v2 h-10 z M4,7 h3 v1 h-3 z M9,7 h3 v1 h-3 z" fill="#3C2F2F" />
+                  <rect x="4" y="5" width="1" height="1" fill="#FFFFFF" />
+                  <rect x="9" y="5" width="1" height="1" fill="#FFFFFF" />
+                  <path d="M6,10 h4 v1 h-4 z M5,9 h1 v1 h-1 z M10,9 h1 v1 h-1 z" fill="#3C2F2F" />
+                  <path d="M6,10 h4 v1 h-4 z" fill="#D32F2F" />
+                </svg>
+              </span>
+              <span class="mood-text">ไหวสบายมาก!</span>
+            </button>
+          </div>
+
+          <div class="form-group margin-top-sm">
+            <label for="textarea-mood-detail" class="pixel-label sub-label">แชร์รายละเอียดเพิ่มเติมได้นะ (เผื่ออยากเล่าอะไรให้ฟังเพิ่มเติม):</label>
+            <textarea id="textarea-mood-detail" class="pixel-textarea" placeholder="ระบายหรือเล่าสู่กันฟังตรงนี้ได้เลย..." rows="2"></textarea>
+          </div>
+        </div>
+
+        <div class="step-navigation">
+          <button type="button" class="pixel-btn prev-btn btn-prev wood-btn">[&lt;&lt;] ย้อนกลับ</button>
+          <button type="button" id="btn-go-to-step-4" class="pixel-btn primary-btn wood-btn">ถัดไป [&gt;&gt;]</button>
+        </div>
+      </section>
+
+      <!-- STEP 4: Review and Submit -->
+      <section id="step-4" class="step-section">
+        <h2 class="step-title">[STAGE 4] สรุปผลเควส</h2>
+        <p class="step-subtitle">กรุณาตรวจสอบข้อมูลก่อนส่งเพื่อรับ "การ์ดพลังชีวิตประจำสัปดาห์"</p>
+
+        <div class="summary-review pixel-box wood-box inner-box">
+          <div class="review-row">
+            <div class="review-avatar-container">
+              <div id="review-avatar-display" class="custom-avatar-preview tiny"></div>
+              <div class="review-name-label">
+                <span class="label">ผู้กล้า:</span>
+                <span id="review-name" class="val">???</span>
+              </div>
+            </div>
+            <div class="review-stats">
+              <div class="stat-item">
+                <span class="label">💖 พลังใจ:</span>
+                <span id="review-score" class="val">50/100</span>
+              </div>
+              <div class="stat-item">
+                <span class="label">🎭 ระดับความไหว:</span>
+                <span id="review-mood" class="val">โอเคอยู่</span>
+              </div>
+            </div>
+          </div>
+
+          <hr class="pixel-divider">
+
+          <div class="review-answers">
+            <div class="answer-box">
+              <div class="answer-title">[QUEST 01] สิ่งที่อยากเห็นตัวเองใน 1 ปี:</div>
+              <div id="review-q1" class="answer-content">ยังไม่ได้ระบุ</div>
+            </div>
+            <div class="answer-box">
+              <div class="answer-title">[QUEST 02] สิ่งที่อยากได้เพิ่มเติมจากทีม:</div>
+              <div id="review-q2" class="answer-content">ยังไม่ได้ระบุ</div>
+            </div>
+            <div class="answer-box">
+              <div class="answer-title">[NOTE] บันทึกเพิ่มเติม:</div>
+              <div id="review-q3" class="answer-content">ไม่มีข้อมูล</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-navigation">
+          <button type="button" class="pixel-btn prev-btn btn-prev wood-btn">[&lt;&lt;] ย้อนกลับ</button>
+          <button type="button" id="btn-submit-quest" class="pixel-btn submit-btn wood-btn">ส่งเควส &amp; รับรางวัล! [LEVEL UP]</button>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="app-footer">
+      <p>© 2026 A1 HEALTH QUEST SYSTEM v1.0.0</p>
+      <button id="btn-show-history" class="pixel-link-btn">[LOG] ดูประวัติการประเมินของคุณ</button>
+    </footer>
+  </div>
+
+  <!-- MODAL: Quest Success / Export Card -->
+  <div id="modal-success" class="modal-overlay">
+    <div class="modal-window pixel-box wood-box">
+      <div class="modal-header">
+        <h2 class="modal-title">🏆 QUEST COMPLETED!</h2>
+      </div>
+
+      <div class="modal-body">
+        <p class="modal-subtitle">เย้! ไอหมูส่งแบบประเมินสุขภาพใจเรียบร้อยแล้ว นี่คือการ์ดประเมินของคุณในรอบนี้:</p>
+
+        <!-- Printable Certificate Card Area -->
+        <div id="health-card-preview-container">
+          <div id="health-card" class="health-card-render pixel-box wood-box">
+            <div class="card-watermark">A1 HEALTH</div>
+            <div class="card-header">
+              <div class="card-badge">♥ LV.100 HEALTH CARD</div>
+              <div class="card-date" id="card-date-display">08/07/2026</div>
+            </div>
+
+            <div class="card-profile-section">
+              <div id="card-avatar-placeholder" class="card-avatar-box"></div>
+              <div class="card-profile-details">
+                <div class="card-name" id="card-name-display">Player Nickname</div>
+                <div class="card-title-status">ไอพวกหมู A1</div>
+              </div>
+            </div>
+
+            <div class="card-stats-section wood-box">
+              <div class="card-stat-bar-group">
+                <div class="card-stat-label">พลังชีวิตใจ (HP)</div>
+                <div class="card-stat-row">
+                  <div class="card-stat-progress-outer">
+                    <div id="card-hp-bar" class="card-stat-progress-inner" style="width: 50%;"></div>
+                  </div>
+                  <div class="card-stat-value" id="card-hp-value">50/100</div>
+                </div>
+              </div>
+              <div class="card-stat-bar-group">
+                <div class="card-stat-label">สถานะปัจจุบัน</div>
+                <div class="card-status-text" id="card-status-val">อยู่ในเกณฑ์ปานกลาง สู้ๆ นะ!</div>
+              </div>
+            </div>
+
+            <div class="card-quest-details">
+              <div class="card-quest-item">
+                <span class="card-quest-q">[QUEST 01] 1 Year Goal:</span>
+                <span class="card-quest-a" id="card-q1-display">อยากเติบโตขึ้น...</span>
+              </div>
+              <div class="card-quest-item">
+                <span class="card-quest-q">[QUEST 02] What I Need:</span>
+                <span class="card-quest-a" id="card-q2-display">การช่วยเหลือจากทีม...</span>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <div class="card-motto">* "สู้ๆน้าไอพวก A1" *</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="modal-description-text">สามารถดาวน์โหลดรูปการ์ดนี้ หรือก๊อปปี้สรุปข้อความไปแปะส่งให้เพื่อนๆ ในแชตได้โดยตรง</p>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btn-download-card" class="pixel-btn primary-btn wood-btn">[SAVE] เซฟการ์ด (PNG)</button>
+        <button id="btn-copy-summary" class="pixel-btn info-btn wood-btn">[COPY] คัดลอกข้อความสรุป</button>
+        <button id="btn-close-modal" class="pixel-btn wood-btn">ปิดหน้านี้ [X]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: History Log -->
+  <div id="modal-history" class="modal-overlay">
+    <div class="modal-window pixel-box wood-box">
+      <div class="modal-header">
+        <h2 class="modal-title">[LOG] ประวัติบันทึกพลังใจ</h2>
+        <button id="btn-close-history" class="modal-close-x">[X]</button>
+      </div>
+      <div class="modal-body">
+        <div id="history-log-list" class="history-list-container">
+          <div class="no-history-msg">ยังไม่มีการบันทึกประวัติความสุขใจในขณะนี้ ลองทำแบบประเมินครั้งแรกดูสิ!</div>
+        </div>
+      </div>
+      <div class="modal-footer justify-between">
+        <button id="btn-clear-history" class="pixel-btn danger-btn small-btn wood-btn">[CLEAR] ลบประวัติทั้งหมด</button>
+        <button id="btn-close-history-footer" class="pixel-btn wood-btn">ปิด [X]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- External JS file -->
+  <script src="script.js"></script>
+</body>
+
+</html>

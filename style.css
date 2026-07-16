@@ -1,0 +1,1370 @@
+/* ==========================================================================
+   A1 Zoo/Jungle Theme - Stylesheet
+   ========================================================================== */
+
+:root {
+  --color-bg-gradient-1: #81C784; /* Soft Light Jungle Green */
+  --color-bg-gradient-2: #A5D6A7; /* Light Pastel Green */
+  --color-border: #3E2723;        /* Dark Cocoa Brown */
+  
+  --color-jungle-green: #4CAF50;  /* Vibrant Leaf Green */
+  --color-jungle-dark: #2E7D32;   /* Dark Leaf Green */
+  --color-jungle-light: #E8F5E9;  /* Mint Leaf Cream */
+  
+  --color-wood-light: #A1887F;    /* Light Wood Board */
+  --color-wood-dark: #5D4037;     /* Dark Wood Board */
+  --color-banana-yellow: #FFEB3B; /* Accent Banana Yellow */
+  --color-banana-dark: #FBC02D;   /* Dark Banana Accent */
+  
+  --color-white: #FFFFFF;
+  --color-gray: #757575;
+  --color-heart-empty: #CFD8DC;   /* Cool Gray for empty hearts */
+  --color-heart-filled: #E91E63;  /* Pink/Red for filled hearts */
+
+  --font-retro: 'Press Start 2P', monospace;
+  --font-thai: 'Itim', cursive, sans-serif;
+  
+  --pixel-size: 4px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: linear-gradient(180deg, var(--color-bg-gradient-1) 0%, var(--color-bg-gradient-2) 100%);
+  background-attachment: fixed;
+  color: var(--color-border);
+  font-family: var(--font-thai);
+  font-size: 18px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+  position: relative;
+  padding: 30px 10px;
+  image-rendering: pixelated;
+}
+
+/* Background Canvas */
+#leaf-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Background Decorations (Jungle Trees) */
+.bg-decorations {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-tree-left {
+  position: absolute;
+  bottom: -10px;
+  left: 10px;
+  width: 220px;
+  height: 220px;
+  opacity: 0.75;
+}
+
+.bg-tree-right {
+  position: absolute;
+  bottom: -10px;
+  right: 10px;
+  width: 220px;
+  height: 220px;
+  opacity: 0.75;
+  transform: scaleX(-1);
+}
+
+@media (max-width: 1100px) {
+  .bg-tree-left, .bg-tree-right {
+    display: none;
+  }
+}
+
+/* Vine overlay at the top of the screen */
+.top-vines-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 24px;
+  background-image: repeating-linear-gradient(90deg, 
+    var(--color-jungle-dark) 0px, 
+    var(--color-jungle-dark) 8px, 
+    transparent 8px, 
+    transparent 20px
+  );
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0.8;
+}
+.top-vines-overlay::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background-image: repeating-linear-gradient(90deg, 
+    var(--color-jungle-green) 4px, 
+    var(--color-jungle-green) 12px, 
+    transparent 12px, 
+    transparent 28px
+  );
+}
+
+/* Modern CSS Scrollbar styling */
+.game-window, .history-list-container, body {
+  --scrollbar-thumb: var(--color-wood-dark);
+  --scrollbar-track: var(--color-bg-gradient-1);
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+  scrollbar-width: thin;
+}
+
+/* Legacy fallback for WebKit/Blink browsers */
+@supports not (scrollbar-color: auto) {
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-wood-dark);
+    border: 3px solid var(--color-border);
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-gradient-1);
+  }
+}
+
+/* ==========================================================================
+   Pixel Art Components (UI Kit)
+   ========================================================================== */
+
+/* Pixel Box Containers */
+.pixel-box {
+  background: var(--color-white);
+  border: 4px solid var(--color-border);
+  outline: 4px solid var(--color-white);
+  outline-offset: -8px;
+  box-shadow: 6px 6px 0px 0px rgba(62, 39, 35, 0.25);
+  position: relative;
+  margin-bottom: 20px;
+}
+
+/* Wood styling for buttons and header boxes */
+.pixel-box.wood-box {
+  background: var(--color-wood-dark);
+  background-image: linear-gradient(to bottom, var(--color-wood-light) 0%, var(--color-wood-dark) 10%, var(--color-wood-dark) 100%);
+  outline-color: var(--color-wood-light);
+  color: var(--color-white);
+}
+
+/* Dirt block style for the main game window */
+.pixel-box.dirt-box {
+  background: #795548; /* Soil brown */
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 16px, #5D4037 16px, #5D4037 20px);
+  outline-color: #8D6E63;
+  color: var(--color-white);
+}
+
+.pixel-box.inner-box {
+  background: var(--color-jungle-light);
+  box-shadow: none;
+  outline-color: var(--color-jungle-light);
+  border-width: 4px;
+  margin-bottom: 15px;
+  padding: 15px;
+  color: var(--color-border);
+}
+
+/* Decorative banana vines */
+.inner-box::after {
+  content: '';
+  position: absolute;
+  top: -12px;
+  right: 15px;
+  width: 24px;
+  height: 24px;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' width='16' height='16'%3E%3Crect x='5' y='1' width='1' height='1' fill='%235D4037'/%3E%3Crect x='4' y='2' width='1' height='1' fill='%235D4037'/%3E%3Crect x='3' y='3' width='2' height='1' fill='%23FFEB3B'/%3E%3Crect x='2' y='4' width='2' height='1' fill='%23FFEB3B'/%3E%3Crect x='1' y='5' width='2' height='1' fill='%23FFEB3B'/%3E%3Crect x='2' y='6' width='2' height='1' fill='%23FFEB3B'/%3E%3Crect x='4' y='5' width='1' height='1' fill='%23FFEB3B'/%3E%3Crect x='3' y='4' width='1' height='1' fill='%23FBC02D'/%3E%3Crect x='2' y='5' width='1' height='1' fill='%23FBC02D'/%3E%3Crect x='4' y='1' width='1' height='1' fill='%233E2723'/%3E%3Crect x='3' y='2' width='1' height='1' fill='%233E2723'/%3E%3Crect x='5' y='2' width='1' height='1' fill='%233E2723'/%3E%3Crect x='2' y='3' width='1' height='1' fill='%233E2723'/%3E%3Crect x='5' y='3' width='1' height='1' fill='%233E2723'/%3E%3Crect x='1' y='4' width='1' height='1' fill='%233E2723'/%3E%3Crect x='0' y='5' width='1' height='1' fill='%233E2723'/%3E%3Crect x='1' y='6' width='1' height='1' fill='%233E2723'/%3E%3Crect x='3' y='7' width='1' height='1' fill='%233E2723'/%3E%3Crect x='4' y='6' width='1' height='1' fill='%233E2723'/%3E%3Crect x='5' y='5' width='1' height='1' fill='%233E2723'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+/* Pixel Buttons */
+.pixel-btn {
+  font-family: var(--font-thai);
+  font-weight: bold;
+  font-size: 18px;
+  padding: 10px 20px;
+  border: 4px solid var(--color-border);
+  background-color: var(--color-white);
+  color: var(--color-border);
+  cursor: pointer;
+  outline: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 0 0 var(--color-border);
+  transform: translateY(0);
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+  user-select: none;
+  border-radius: 0;
+}
+
+.pixel-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 0 var(--color-border);
+}
+
+.pixel-btn.small-btn {
+  font-size: 14px;
+  padding: 6px 12px;
+  border-width: 3px;
+  box-shadow: 0 3px 0 0 var(--color-border);
+}
+
+.pixel-btn.small-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 0 var(--color-border);
+}
+
+.pixel-btn.wood-btn {
+  background-color: var(--color-banana-yellow);
+  color: var(--color-border);
+}
+.pixel-btn.wood-btn:hover {
+  background-color: var(--color-banana-dark);
+}
+
+.pixel-btn.primary-btn {
+  background-color: var(--color-banana-yellow);
+}
+.pixel-btn.primary-btn:hover {
+  background-color: var(--color-banana-dark);
+}
+
+.pixel-btn.submit-btn {
+  background-color: var(--color-banana-yellow);
+  font-size: 20px;
+  padding: 12px 24px;
+  color: var(--color-border);
+}
+.pixel-btn.submit-btn:hover {
+  background-color: var(--color-banana-dark);
+  animation: pulse-pixel 0.5s infinite alternate;
+}
+
+.pixel-btn.info-btn {
+  background-color: var(--color-jungle-light);
+}
+.pixel-btn.info-btn:hover {
+  background-color: var(--color-jungle-green);
+  color: var(--color-white);
+}
+
+.pixel-btn.danger-btn {
+  background-color: #ff9e9e;
+}
+.pixel-btn.danger-btn:hover {
+  background-color: #ff7b7b;
+}
+
+.pixel-btn.prev-btn {
+  background-color: #efefef;
+  color: var(--color-border);
+}
+
+/* Pixel Link Button */
+.pixel-link-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-thai);
+  font-size: 16px;
+  color: var(--color-banana-yellow);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 5px;
+  font-weight: bold;
+}
+.pixel-link-btn:hover {
+  color: var(--color-white);
+}
+
+/* Form Controls */
+.form-group {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.pixel-label {
+  display: block;
+  font-family: var(--font-thai);
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 18px;
+  color: var(--color-banana-yellow);
+}
+
+.pixel-label.sub-label {
+  font-size: 16px;
+  color: #5D4037;
+}
+
+.pixel-input {
+  width: 100%;
+  font-family: var(--font-thai);
+  font-size: 18px;
+  padding: 10px 12px;
+  border: 4px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-border);
+  outline: none;
+  border-radius: 0;
+}
+.pixel-input:focus {
+  border-color: var(--color-jungle-green);
+  background-color: var(--color-jungle-light);
+}
+
+.pixel-textarea {
+  width: 100%;
+  font-family: var(--font-thai);
+  font-size: 18px;
+  padding: 12px;
+  border: 4px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-border);
+  outline: none;
+  resize: vertical;
+  border-radius: 0;
+}
+.pixel-textarea:focus {
+  border-color: var(--color-jungle-green);
+  background-color: var(--color-jungle-light);
+}
+
+.pixel-divider {
+  border: none;
+  border-top: 4px dashed var(--color-border);
+  margin: 20px 0;
+  height: 0;
+}
+
+/* ==========================================================================
+   Layout Containers
+   ========================================================================== */
+.app-container {
+  max-width: 750px;
+  margin: 0 auto;
+  padding: 10px 0 50px 0;
+}
+
+/* Header with Logo */
+.app-header {
+  padding: 15px 25px;
+  text-align: center;
+  max-width: 480px;
+  width: calc(100% - 20px);
+  margin: 0 auto 20px auto;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-container {
+  margin-bottom: 5px;
+}
+
+.app-logo {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 4px solid var(--color-border);
+  outline: 4px solid var(--color-banana-yellow);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  object-fit: cover;
+  background-color: var(--color-white);
+  display: block;
+}
+
+.pixel-title {
+  font-family: var(--font-retro);
+  font-size: 20px;
+  color: var(--color-white);
+  text-shadow: 2px 2px 0px var(--color-border);
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.jungle-icon {
+  display: inline-block;
+  animation: jungle-sway 2.5s ease-in-out infinite alternate;
+}
+
+/* Progress Bar */
+.progress-bar-container {
+  padding: 12px 20px;
+}
+
+.progress-label {
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  color: var(--color-white);
+  text-shadow: 1px 1px 0px var(--color-border);
+}
+
+.progress-bar-outer {
+  height: 24px;
+  border: 4px solid var(--color-border);
+  background: var(--color-wood-dark);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--color-banana-yellow),
+    var(--color-banana-yellow) 10px,
+    var(--color-banana-dark) 10px,
+    var(--color-banana-dark) 20px
+  );
+  width: 0%;
+  transition: width 0.3s cubic-bezier(0.1, 0.8, 0.3, 1);
+}
+
+/* Main Game Window */
+.game-window {
+  min-height: 400px;
+  padding: 30px;
+}
+
+/* Step Sections */
+.step-section {
+  display: none;
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.step-section.active {
+  display: block;
+}
+
+.step-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-banana-yellow);
+  text-shadow: 2px 2px 0px var(--color-border);
+}
+
+.step-subtitle {
+  font-size: 16px;
+  color: #E8F5E9;
+  margin-bottom: 25px;
+  text-shadow: 1px 1px 0px var(--color-border);
+}
+
+/* Step Navigation */
+.step-navigation {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+  gap: 15px;
+}
+
+/* ==========================================================================
+   STEP 1: Custom Character Customizer Panel
+   ========================================================================== */
+.customizer-panel {
+  display: flex;
+  gap: 20px;
+  padding: 20px !important;
+  flex-direction: row;
+}
+
+.preview-column {
+  flex: 0 0 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.15);
+  border: 4px solid var(--color-border);
+  padding: 15px;
+}
+
+.custom-avatar-preview {
+  width: 96px;
+  height: 96px;
+  background: var(--color-white);
+  border: 4px dashed var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.custom-avatar-preview svg {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+/* Tiny preview inside Stage 4 Summary */
+.custom-avatar-preview.tiny {
+  width: 64px;
+  height: 64px;
+  border-width: 3px;
+  background: var(--color-white);
+}
+
+.avatar-title-label {
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--color-border);
+  margin-top: 8px;
+  text-align: center;
+}
+
+.controls-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Customizer Tabs */
+.customizer-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 4px solid var(--color-border);
+  padding-bottom: 6px;
+}
+
+.tab-btn {
+  font-family: var(--font-thai);
+  font-weight: bold;
+  font-size: 15px;
+  padding: 6px 12px;
+  border: 3px solid var(--color-border);
+  background-color: var(--color-wood-light);
+  color: var(--color-border);
+  cursor: pointer;
+  border-radius: 0;
+  outline: none;
+}
+
+.tab-btn:hover {
+  background-color: var(--color-banana-yellow);
+}
+
+.tab-btn.active {
+  background-color: var(--color-banana-yellow);
+  border-bottom-color: var(--color-banana-yellow);
+  transform: translateY(2px);
+}
+
+/* Tab Content Visibility */
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+
+/* Options Grid */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.option-btn {
+  font-family: var(--font-thai);
+  font-size: 15px;
+  font-weight: bold;
+  padding: 8px;
+  border: 3px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 0;
+  outline: none;
+  text-align: left;
+}
+
+.option-btn:hover {
+  background-color: var(--color-jungle-light);
+}
+
+.option-btn.selected {
+  background-color: var(--color-banana-yellow);
+  border-color: var(--color-border);
+  box-shadow: inset 0 0 0 2px var(--color-banana-dark);
+}
+
+.option-preview {
+  font-size: 18px;
+  display: block;
+}
+
+/* ==========================================================================
+   STEP 2: 100-Heart Rating
+   ========================================================================== */
+.heart-container-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px !important;
+}
+
+.score-display {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  font-family: var(--font-retro);
+  background-color: var(--color-white);
+  border: 4px solid var(--color-border);
+  padding: 8px 20px;
+}
+
+.score-number {
+  font-size: 32px;
+  color: var(--color-heart-filled);
+  font-weight: bold;
+}
+
+.score-unit {
+  font-size: 16px;
+  color: var(--color-border);
+  margin-left: 5px;
+}
+
+.heart-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 8px;
+  max-width: 380px;
+  width: 100%;
+  margin: 0 auto 20px auto;
+  user-select: none;
+  touch-action: none;
+}
+
+.pixel-heart {
+  width: 100%;
+  aspect-ratio: 1;
+  cursor: pointer;
+  transition: transform 0.05s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pixel-heart:hover {
+  transform: scale(1.2);
+}
+
+.pixel-heart svg {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.pixel-heart.empty svg .heart-fill {
+  fill: var(--color-heart-empty);
+}
+
+.pixel-heart.filled svg .heart-fill {
+  fill: var(--color-heart-filled);
+}
+
+.score-status-box {
+  background: var(--color-white);
+  border: 4px solid var(--color-border);
+  padding: 12px 20px;
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-status-desc {
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--color-border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.status-svg {
+  width: 24px;
+  height: 24px;
+  image-rendering: pixelated;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   STEP 3: Quest Form / Questions
+   ========================================================================== */
+.quest-card {
+  margin-bottom: 25px !important;
+  position: relative;
+  padding: 20px !important;
+}
+
+.quest-number {
+  position: absolute;
+  top: -15px;
+  left: 20px;
+  font-family: var(--font-retro);
+  font-size: 12px;
+  background-color: var(--color-border);
+  color: var(--color-white);
+  padding: 4px 8px;
+  border: 2px solid var(--color-white);
+}
+
+.quest-question {
+  margin-top: 5px;
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: var(--color-border) !important;
+}
+
+.mood-selection {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.mood-btn {
+  background: var(--color-white);
+  border: 4px solid var(--color-border);
+  padding: 10px 5px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.1s ease;
+  font-family: var(--font-thai);
+  font-weight: bold;
+  border-radius: 0;
+  outline: none;
+}
+
+.mood-btn:hover {
+  background-color: var(--color-jungle-light);
+  transform: translateY(-2px);
+}
+
+.mood-btn.active {
+  background-color: var(--color-banana-yellow);
+  border-color: var(--color-border);
+  box-shadow: 0 4px 0 0 rgba(251, 192, 45, 0.4);
+}
+
+.mood-emoji {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 32px;
+}
+
+.mood-svg {
+  image-rendering: pixelated;
+  display: block;
+}
+
+.mood-text {
+  font-size: 14px;
+}
+
+.margin-top-sm {
+  margin-top: 15px;
+}
+
+/* ==========================================================================
+   STEP 4: Review Screen
+   ========================================================================== */
+.summary-review {
+  padding: 20px !important;
+}
+
+.review-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.review-avatar-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.review-name-label {
+  display: flex;
+  flex-direction: column;
+}
+
+.review-name-label .label {
+  font-size: 14px;
+  color: var(--color-gray);
+}
+
+.review-name-label .val {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.review-stats {
+  display: flex;
+  gap: 20px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-white);
+  border: 3px solid var(--color-border);
+  padding: 6px 12px;
+  color: var(--color-border);
+}
+
+.stat-item .label {
+  font-size: 13px;
+  color: var(--color-gray);
+}
+
+.stat-item .val {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.review-answers {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.answer-box {
+  background: var(--color-white);
+  border: 3px solid var(--color-border);
+  padding: 12px 15px;
+  color: var(--color-border);
+}
+
+.answer-title {
+  font-weight: bold;
+  font-size: 16px;
+  color: #000000;
+  margin-bottom: 5px;
+}
+
+.answer-content {
+  font-size: 16px;
+  word-break: break-word;
+  white-space: pre-line;
+}
+
+/* ==========================================================================
+   Modals
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.65);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-window {
+  width: 100%;
+  max-width: 580px;
+  padding: 24px;
+  animation: modal-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.modal-header {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 4px dashed var(--color-border);
+  padding-bottom: 10px;
+}
+
+.modal-title {
+  font-family: var(--font-retro);
+  font-size: 16px;
+  color: var(--color-banana-yellow);
+}
+
+.modal-close-x {
+  background: none;
+  border: none;
+  font-size: 30px;
+  line-height: 1;
+  color: var(--color-white);
+  cursor: pointer;
+}
+.modal-close-x:hover {
+  color: var(--color-banana-yellow);
+}
+
+.modal-body {
+  margin-bottom: 20px;
+}
+
+.modal-subtitle {
+  font-weight: bold;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.modal-description-text {
+  font-size: 14px;
+  color: #D7CCC8;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.modal-footer.justify-between {
+  justify-content: space-between;
+}
+
+/* ==========================================================================
+   HEALTH CARD RENDER (Jungle Quest Certificate)
+   ========================================================================== */
+#health-card-preview-container {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+  width: 100%;
+}
+
+.health-card-render {
+  width: 100%;
+  max-width: 480px;
+  background-color: #E8F5E9; /* Jungle Mint Background */
+  background-image: radial-gradient(var(--color-jungle-light) 20%, transparent 20%),
+                    radial-gradient(var(--color-jungle-light) 20%, transparent 20%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  border: 6px solid var(--color-border) !important;
+  outline: 6px solid var(--color-wood-light) !important;
+  outline-offset: -12px;
+  padding: 25px 25px 20px 25px !important;
+  box-shadow: none !important;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  color: var(--color-border);
+}
+
+.card-watermark {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  font-family: var(--font-retro);
+  font-size: 48px;
+  color: rgba(62, 39, 35, 0.04);
+  transform: rotate(-15deg);
+  pointer-events: none;
+  font-weight: bold;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 4px dashed var(--color-border);
+  padding-bottom: 8px;
+}
+
+.card-badge {
+  font-family: var(--font-retro);
+  font-size: 10px;
+  background: var(--color-border);
+  color: var(--color-banana-yellow);
+  padding: 3px 6px;
+  font-weight: bold;
+}
+
+.card-date {
+  font-family: var(--font-retro);
+  font-size: 10px;
+  color: var(--color-border);
+  font-weight: bold;
+}
+
+.card-profile-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.card-avatar-box {
+  background: var(--color-white);
+  border: 4px solid var(--color-border);
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+}
+
+.card-avatar-box svg {
+  width: 100%;
+  height: 100%;
+}
+
+.card-profile-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-name {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.card-title-status {
+  font-size: 13px;
+  color: var(--color-jungle-dark);
+  font-weight: bold;
+}
+
+.card-stats-section {
+  background: var(--color-white);
+  border: 3px solid var(--color-border);
+  padding: 12px;
+  margin-bottom: 15px;
+}
+
+.card-stat-bar-group {
+  margin-bottom: 10px;
+}
+.card-stat-bar-group:last-child {
+  margin-bottom: 0;
+}
+
+.card-stat-label {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--color-gray);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.card-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-stat-progress-outer {
+  flex-grow: 1;
+  height: 16px;
+  border: 3px solid var(--color-border);
+  background: var(--color-heart-empty);
+}
+
+.card-stat-progress-inner {
+  height: 100%;
+  background: var(--color-heart-filled);
+}
+
+.card-stat-value {
+  font-family: var(--font-retro);
+  font-size: 10px;
+  font-weight: bold;
+  width: 50px;
+  text-align: right;
+}
+
+.card-status-text {
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--color-border);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-quest-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.card-quest-item {
+  display: flex;
+  flex-direction: column;
+  background: rgba(255,255,255,0.65);
+  border-left: 4px solid var(--color-jungle-green);
+  padding: 4px 10px;
+}
+
+.card-quest-q {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--color-gray);
+}
+
+.card-quest-a {
+  font-size: 14px;
+  color: var(--color-border);
+  word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.card-footer {
+  text-align: center;
+  border-top: 3px dashed var(--color-border);
+  padding-top: 10px;
+}
+
+.card-motto {
+  font-size: 12px;
+  font-weight: bold;
+  color: var(--color-gray);
+}
+
+/* ==========================================================================
+   History Listing
+   ========================================================================== */
+.history-list-container {
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.history-item {
+  border: 3px solid var(--color-border);
+  background: var(--color-jungle-light);
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--color-border);
+}
+
+.history-item:last-child {
+  margin-bottom: 0;
+}
+
+.history-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-date {
+  font-size: 13px;
+  color: var(--color-gray);
+}
+
+.history-name {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.history-rating {
+  font-weight: bold;
+  color: var(--color-heart-filled);
+}
+
+.history-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.no-history-msg {
+  text-align: center;
+  color: #D7CCC8;
+  padding: 30px 10px;
+  font-size: 16px;
+}
+
+/* ==========================================================================
+   Footer
+   ========================================================================== */
+.app-footer {
+  text-align: center;
+  margin-top: 20px;
+  padding: 10px;
+  font-size: 13px;
+  color: #E8F5E9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes modal-pop {
+  from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes jungle-sway {
+  from { transform: rotate(-8deg) scale(1); }
+  to { transform: rotate(8deg) scale(1.15); }
+}
+
+@keyframes pulse-pixel {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.15); }
+}
+
+/* Responsive Rules */
+@media (max-width: 600px) {
+  body {
+    padding: 10px 5px;
+  }
+  
+  .game-window {
+    padding: 15px;
+  }
+  
+  .pixel-title {
+    font-size: 15px;
+  }
+  
+  .customizer-panel {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .preview-column {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  .options-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  
+  .heart-grid {
+    gap: 4px;
+  }
+  
+  .mood-selection {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .mood-selection .mood-btn:last-child {
+    grid-column: span 2;
+  }
+  
+  .review-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .review-stats {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .modal-window {
+    padding: 15px;
+  }
+  
+  .health-card-render {
+    padding: 15px !important;
+  }
+  
+  .card-profile-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
