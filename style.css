@@ -1304,6 +1304,241 @@ body {
   to { filter: brightness(1.15); }
 }
 
+/* ==========================================================================
+   Surprise Chest & Senior Letters
+   ========================================================================== */
+.surprise-window {
+  max-width: 600px;
+  background: var(--color-dirt-bg) !important; /* A darker jungle ground feel */
+  border-color: #3E2723;
+}
+
+.text-highlight {
+  color: var(--color-banana-yellow) !important;
+  font-family: var(--font-retro);
+  font-size: 16px;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Chest Styling */
+.chest-container {
+  width: 140px;
+  height: 140px;
+  margin: 35px auto;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.chest-container:hover {
+  transform: scale(1.1);
+}
+
+.chest-container:active {
+  transform: scale(0.95);
+}
+
+.pixel-chest {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  overflow: visible;
+}
+
+/* Lid opening transition */
+.chest-lid {
+  transform-origin: 4px 15px; /* Base corner of the lid */
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.chest-container.open .chest-lid {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+/* Base squeeze on open */
+.chest-base {
+  transition: transform 0.3s ease;
+}
+
+.chest-container.open .chest-base {
+  transform: scaleY(0.95);
+}
+
+/* Glow Backdrop */
+.chest-glow {
+  transform-origin: 16px 16px;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.chest-container.open .chest-glow {
+  opacity: 0.85;
+  transform: scale(1.6);
+  animation: glow-rotate 8s linear infinite;
+}
+
+@keyframes glow-rotate {
+  0% { transform: scale(1.6) rotate(0deg); }
+  100% { transform: scale(1.6) rotate(360deg); }
+}
+
+/* Chest Shaking Animation */
+.chest-container.shaking {
+  animation: chest-rattle 0.15s linear infinite;
+}
+
+@keyframes chest-rattle {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(0px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  75% { transform: translate(2px, 1px) rotate(-1deg); }
+  90% { transform: translate(-1px, -1px) rotate(1deg); }
+  100% { transform: translate(0px, 0px) rotate(0deg); }
+}
+
+/* Sparks/Particles styling */
+.chest-spark {
+  position: absolute;
+  pointer-events: none;
+  font-size: 20px;
+  z-index: 1000;
+  animation: spark-float 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes spark-float {
+  0% {
+    transform: translate(0, 0) scale(0.5) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--dx), var(--dy)) scale(1.2) rotate(var(--dr));
+    opacity: 0;
+  }
+}
+
+/* Senior Messages Layout */
+.senior-messages-container {
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 10px 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.senior-messages-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.senior-messages-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.senior-messages-container::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+/* Parchment scroll message card */
+.senior-card {
+  background: #fff8e7; /* Warm papyrus/parchment color */
+  border: 3px solid var(--color-border);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.25);
+  padding: 15px;
+  border-radius: 6px;
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: cascade-slide-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;
+}
+
+@keyframes cascade-slide-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.senior-avatar-box {
+  width: 48px;
+  height: 48px;
+  background: var(--color-banana-yellow);
+  border: 3px solid var(--color-border);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.15);
+  overflow: hidden; /* Clips image corners nicely */
+}
+
+.senior-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.leader-card {
+  border: 3px solid #ffb300 !important; /* Gold border */
+  box-shadow: 4px 4px 0px #ff6f00 !important; /* Golden shadow */
+  background: #fffdf0 !important; /* Brighter background for contrast */
+}
+
+.senior-content {
+  flex-grow: 1;
+}
+
+.senior-name {
+  font-family: var(--font-retro);
+  font-size: 13px;
+  color: #1b5e20; /* Deep green */
+  margin-bottom: 2px;
+}
+
+.senior-role {
+  font-size: 12px;
+  color: #795548;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.senior-message-text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--color-border);
+}
+
+/* Responsive adjustment for senior card */
+@media (max-width: 500px) {
+  .senior-card {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .senior-avatar-box {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+}
+
 /* Responsive Rules */
 @media (max-width: 600px) {
   body {

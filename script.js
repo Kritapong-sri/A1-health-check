@@ -167,7 +167,7 @@ function generateAvatarSVG(customizer) {
   const hatSVG = CUSTOMIZER_LAYERS.hat[customizer.hat] || "";
   const outfitSVG = CUSTOMIZER_LAYERS.outfit[customizer.outfit] || "";
   const accSVG = CUSTOMIZER_LAYERS.acc[customizer.acc] || "";
-  
+
   return `<svg class="avatar-svg" viewBox="0 0 16 16" width="64" height="64">
     ${PIG_BASE}
     ${outfitSVG}
@@ -179,25 +179,25 @@ function generateAvatarSVG(customizer) {
 function getAvatarDescriptionText(customizer) {
   const hatNames = {
     none: "ไม่มีหมวก",
-    safari_hat: "หมวกซาฟารี",
-    curly_yellow: "ผมบลอนด์หยิก",
+    safari_hat: "หมวกสวนสัตว์",
+    curly_yellow: "ผมหยิก",
     gold_hair: "ผมทอง",
     sunglasses: "แว่นกันแดด",
     cookie_hat: "หมวกคุกกี้"
   };
   const outfitNames = {
     none: "ไม่มีชุด",
-    safari_uniform: "ชุดนักเดินป่า",
-    red_hoodie: "เสื้อฮู้ดแดง",
-    cute_overalls: "เอี๊ยมฟ้าน่ารัก",
-    vine_scarf: "ผ้าพันคอเถาวัลย์",
+    safari_uniform: "ชุดสวนสัตว์",
+    red_hoodie: "เสื้อแดง",
+    cute_overalls: "เอี๊ยมฟ้า",
+    vine_scarf: "เถาวัลย์",
     cookie_outfit: "ชุดคุกกี้"
   };
   const accNames = {
     none: "ไม่มีของแต่ง",
     parrot: "นกแก้วป่า",
-    banana: "กล้วยป่า",
-    bee: "ผึ้งน้อย"
+    banana: "กล้วย",
+    bee: "ผึ้ง"
   };
   return `หมวก:[${hatNames[customizer.hat]}] ชุด:[${outfitNames[customizer.outfit]}] สัตว์เลี้ยง:[${accNames[customizer.acc]}]`;
 }
@@ -215,7 +215,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    
+
     btn.classList.add('active');
     const tabId = `tab-${btn.dataset.tab}`;
     document.getElementById(tabId).classList.add('active');
@@ -228,12 +228,12 @@ document.querySelectorAll('.option-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const category = btn.dataset.category;
     const value = btn.dataset.value;
-    
+
     // Deselect other options in this category
     document.querySelectorAll(`.option-btn[data-category="${category}"]`).forEach(b => {
       b.classList.remove('selected');
     });
-    
+
     btn.classList.add('selected');
     state.customizer[category] = value;
     updateAvatarPreview();
@@ -255,9 +255,9 @@ const MOOD_TEXTS = {
 
 function getScoreDescription(score) {
   if (score <= 20) {
-    return "พลังชีวิตต่ำเตี้ยเรี่ยดินป่า! มาเติมพลังกับเถาวัลย์กอดกันนะ (X_X)";
+    return "พลังชีวิตต่ำเตี้ยเรี่ยดินป่า! ไหวมั้ยไอหมู (X_X)";
   } else if (score <= 40) {
-    return "เหนื่อยล้าเหมือนเดินป่าหลงทาง พักผ่อนใต้ต้นกล้วยบ้างนะแก (i_i)";
+    return "เหนื่อยล้าเหมือนเดินป่าหลงทาง พักผ่อนใต้ต้นกล้วยบ้างนะ (i_i)";
   } else if (score <= 60) {
     return "อยู่ในเกณฑ์ปานกลาง ป่ากว้างใหญ่แต่แกสู้ไหวแน่นอน! [v]";
   } else if (score <= 80) {
@@ -400,6 +400,41 @@ const sounds = {
 
       osc.start(startTime);
       osc.stop(startTime + duration);
+    });
+  },
+
+  chestOpen() {
+    if (!state.soundEnabled) return;
+    initAudio();
+    const now = audioCtx.currentTime;
+
+    // Rising fantasy sound effect (arpeggio)
+    const notes = [
+      { f: 261.63, t: 0 },     // C4
+      { f: 329.63, t: 0.05 },  // E4
+      { f: 392.00, t: 0.10 },  // G4
+      { f: 523.25, t: 0.15 },  // C5
+      { f: 659.25, t: 0.20 },  // E5
+      { f: 783.99, t: 0.25 },  // G5
+      { f: 1046.50, t: 0.30 }, // C6
+      { f: 1318.51, t: 0.35 }  // E6
+    ];
+
+    notes.forEach(note => {
+      const startTime = now + note.t;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(note.f, startTime);
+
+      gain.gain.setValueAtTime(0.04, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+
+      osc.start(startTime);
+      osc.stop(startTime + 0.3);
     });
   }
 };
@@ -774,17 +809,17 @@ function submitQuestForm() {
       },
       body: JSON.stringify(record)
     })
-    .then(() => {
-      modalSuccess.classList.add('active');
-    })
-    .catch(err => {
-      console.error("Error sending data to Google Sheet:", err);
-      modalSuccess.classList.add('active'); // Still show modal even if fetch failed so UX continues
-    })
-    .finally(() => {
-      btnSubmit.disabled = false;
-      btnSubmit.innerHTML = originalBtnText;
-    });
+      .then(() => {
+        modalSuccess.classList.add('active');
+      })
+      .catch(err => {
+        console.error("Error sending data to Google Sheet:", err);
+        modalSuccess.classList.add('active'); // Still show modal even if fetch failed so UX continues
+      })
+      .finally(() => {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = originalBtnText;
+      });
   } else {
     // If Web App URL not provided yet, fallback gracefully and show success modal
     console.warn("GOOGLE_SHEET_URL is not set. Data saved locally only.");
@@ -985,6 +1020,196 @@ function renderHistoryList() {
       </div>
     `;
     historyList.appendChild(row);
+  });
+}
+
+// ==========================================================================
+// Surprise Chest & Senior Letters Logic
+// ==========================================================================
+const SENIOR_MESSAGES = [
+  {
+    name: "พี่ปุน",
+    role: "Head of A1 (รุ่นพี่ปีที่แล้ว)",
+    image: "poon.png",
+    avatar: "👑",
+    message: "ดีจ้าเอ1ทุกคนน เป็นไงบ้างสนุกกับการทำกรุ๊ปมั้ยตอนนี้ สู้ๆนะเด็กๆ พี่เชื่อว่ามันคงมีอะไรหลายๆอย่างที่เป็นอุปสรรคในการทำกรุ๊ป แต่พี่ขอให้พวกเราผ่านมันไปได้ทั้งหมด ผ่านมันไปด้วยกันทุกคนกับเพื่อนๆในกรุ๊ป สนุก เศร้า เฮอา ไปพร้อมกัน หวังว่าการทำกรุ๊ปจะเป็นความทรงจำที่ดีในปี2 ของน้องๆนะ🤟"
+  },
+  {
+    name: "พี่พัด",
+    role: "Head of A1 (รุ่นพี่ปีที่แล้ว)",
+    image: "pat.png",
+    avatar: "👑",
+    message: "A1โคตรโหด A1โคตรเจ๋ง A1โคตรเฟี๊ยว น้องๆสู้ตาย น้องๆสู้สู้ 😘"
+  },
+  {
+    name: "พี่จรณ์",
+    role: "ฝ่ายกีฬา (รุ่นพี่ปีที่แล้ว)",
+    image: "jorn_sports.jpg",
+    avatar: "⚽",
+    message: "สู้ๆนะเด็กๆ ขอให้สนุกกับปี2 มีงานอะไรก็คอยช่วยๆกัน มีปัญหาไม่พอใจอะไรกันก็คุยกันดีๆนะครับ (แต่ถ้าเป็นคนนอกกรุ๊ปก็ซัดเลย55555)"
+  },
+  {
+    name: "พี่ปัน ",
+    role: "PR (รุ่นพี่ปีที่แล้ว)",
+    image: "pun_pr.png",
+    avatar: "❤️",
+    message: "เป็นกำลังใจให้น้อง ๆ ทุกคน ขอให้สนุกกับการทำงาน ช่วยกันเต็มที่ และเชื่อมั่นในทีมA1 สุดท้ายทุกความเหนื่อยจะกลายเป็นความภูมิใจ สู้ ๆ ❤️"
+  },
+  {
+    name: "พี่จีโน่",
+    role: "Welfare (รุ่นพี่ปีที่แล้ว)",
+    image: "geno_welfare.png",
+    avatar: "🥤",
+    message: "สู้ๆน้องๆพี่จีโน่ welfare ปีที่แล้ว ชื่อว่าพวกน้องจะทำให้A1ของเรายิ่งใหญ่กว่าเดิมได้แน่ในปีนี้อีกไม่กีวันก็วันจริงแล้วสู้ๆพี่เป็นกำลังใจให้"
+  },
+  {
+    name: "พี่อิมเอม",
+    role: "Finance (รุ่นพี่ปีที่แล้ว)",
+    image: "imem_finance.png",
+    avatar: "💵",
+    message: "ใกล้จะถึงเปิดฟ้าแล้วน้าเด้กกก ๆ คิดว่าช่วงนี้ทุกคนน่าจะเหนื่อยกันมาก ๆๆ แต่พี่เชื่อว่าพอถึงวันเปิดฟ้า แล้วได้เห็นน้อง ๆ เอนจอยกับสิ่งที่แกจัด แกจะภูมิใจกับมันมาก ๆ แล้วพวกพี่ ๆ ก็ภูมิใจในตัวพวกแกมากมากเหมือนกันน้า🫶🏻 เด้ก ๆ ที่ชั้นเห็นในวันเปิดฟ้า วันนี้เป็นพี่มาจัดให้น้องรุ่นต่อไปแล้วㅜㅜ ยังไงก็อย่าลืมหาเวลาพักผ่อนกันด้วยนะะ เติมเอเนอจี้เยอะ ๆๆ เก้บพลังไปปล่อยให้น้องงงงง เย่ะะ⭐️💘💘"
+  },
+  {
+    name: "พี่ไรเฟิล",
+    role: "Acty (รุ่นพี่ปีที่แล้ว)",
+    image: "rifle_acty.jpg",
+    avatar: "🎮",
+    message: "ผมไรเฟิลเอง Acty ปีที่แล้ว เก่งมากไอน้อง สู้ๆนะจะเปิดฟ้าละ เก่งโคดๆเลย สู้ๆน้ามันอาจจะเหนื่อยหน่อยแต่เราเชื่อว่าทุกเกมที่พวกแกได้เล่นพวกแกได้คิดกันมันจะทำให้แกมีความสุขไปกับมันเว้ย เก่งละสู้เว้ย!!!"
+  },
+];
+
+const modalChestSurprise = document.getElementById('modal-chest-surprise');
+const btnSurpriseChest = document.getElementById('btn-surprise-chest');
+const btnCloseSurprise = document.getElementById('btn-close-surprise');
+const btnCloseSurpriseFooter = document.getElementById('btn-close-surprise-footer');
+const chestClickzone = document.getElementById('chest-clickzone');
+const surpriseChestStage = document.getElementById('surprise-chest-stage');
+const surpriseMessagesStage = document.getElementById('surprise-messages-stage');
+const seniorMessagesList = document.getElementById('senior-messages-list');
+
+let isChestOpen = false;
+
+btnSurpriseChest.addEventListener('click', () => {
+  sounds.click();
+  // Open the surprise modal
+  modalChestSurprise.classList.add('active');
+  // Reset stages
+  isChestOpen = false;
+  chestClickzone.classList.remove('open');
+  chestClickzone.classList.remove('shaking');
+  surpriseChestStage.style.display = 'block';
+  surpriseMessagesStage.style.display = 'none';
+  btnCloseSurpriseFooter.style.display = 'none';
+  seniorMessagesList.innerHTML = '';
+});
+
+function closeSurpriseModal() {
+  sounds.click();
+  modalChestSurprise.classList.remove('active');
+}
+
+btnCloseSurprise.addEventListener('click', closeSurpriseModal);
+btnCloseSurpriseFooter.addEventListener('click', closeSurpriseModal);
+
+chestClickzone.addEventListener('click', () => {
+  if (isChestOpen) return;
+  isChestOpen = true;
+
+  // Shake the chest
+  chestClickzone.classList.add('shaking');
+
+  // Sparkle pre-effects
+  let interval = setInterval(() => {
+    if (chestClickzone.classList.contains('shaking')) {
+      spawnChestParticles(chestClickzone, 3);
+    }
+  }, 100);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    chestClickzone.classList.remove('shaking');
+    chestClickzone.classList.add('open');
+    sounds.chestOpen();
+
+    // Large sparkle explosion
+    spawnChestParticles(chestClickzone, 30);
+
+    // After brief delay, show messages
+    setTimeout(() => {
+      // Fade out chest stage / swap view
+      surpriseChestStage.style.display = 'none';
+      surpriseMessagesStage.style.display = 'block';
+      btnCloseSurpriseFooter.style.display = 'block';
+
+      // Render senior letters
+      renderSeniorMessages();
+    }, 1000);
+
+  }, 800);
+});
+
+function spawnChestParticles(element, count = 20) {
+  const rect = element.getBoundingClientRect();
+  const emojis = ['✨', '💖', '⭐', '🍃', '🎉', '🐷'];
+
+  for (let i = 0; i < count; i++) {
+    const spark = document.createElement('div');
+    spark.className = 'chest-spark';
+    spark.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+    // Calculate position relative to viewport scroll
+    const x = rect.left + rect.width / 2 + window.scrollX;
+    const y = rect.top + rect.height / 2 + window.scrollY;
+
+    spark.style.left = `${x}px`;
+    spark.style.top = `${y}px`;
+
+    // Random destination directions
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 80 + Math.random() * 120;
+    const dx = Math.cos(angle) * distance;
+    const dy = Math.sin(angle) * distance - 40; // upward bias
+    const dr = 90 + Math.random() * 270; // rotation
+
+    spark.style.setProperty('--dx', `${dx}px`);
+    spark.style.setProperty('--dy', `${dy}px`);
+    spark.style.setProperty('--dr', `${dr}deg`);
+
+    document.body.appendChild(spark);
+
+    // Remove spark after animation completes
+    setTimeout(() => {
+      spark.remove();
+    }, 800);
+  }
+}
+
+function renderSeniorMessages() {
+  seniorMessagesList.innerHTML = '';
+
+  SENIOR_MESSAGES.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = 'senior-card';
+    if (item.role.includes("Head")) {
+      card.className += ' leader-card';
+    }
+    // Cascading delays
+    card.style.animationDelay = `${index * 0.25}s`;
+
+    const avatarHtml = item.image
+      ? `<img src="${item.image}" alt="${item.name}" class="senior-avatar-img">`
+      : item.avatar;
+
+    card.innerHTML = `
+      <div class="senior-avatar-box">${avatarHtml}</div>
+      <div class="senior-content">
+        <div class="senior-name">${item.name}</div>
+        <div class="senior-role">${item.role}</div>
+        <div class="senior-message-text">${item.message}</div>
+      </div>
+    `;
+
+    seniorMessagesList.appendChild(card);
   });
 }
 

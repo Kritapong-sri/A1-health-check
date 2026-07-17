@@ -462,9 +462,90 @@
       </div>
 
       <div class="modal-footer">
+        <button id="btn-surprise-chest" class="pixel-btn warning-btn wood-btn" style="background-color: #ff9800; border-color: #e65100; color: #ffffff;">🎁 เปิดกล่องสมบัติ</button>
         <button id="btn-download-card" class="pixel-btn primary-btn wood-btn">[SAVE] เซฟการ์ด (PNG)</button>
         <button id="btn-copy-summary" class="pixel-btn info-btn wood-btn">[COPY] คัดลอกข้อความสรุป</button>
         <button id="btn-close-modal" class="pixel-btn wood-btn">ปิดหน้านี้ [X]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Chest Surprise & Senior Messages -->
+  <div id="modal-chest-surprise" class="modal-overlay">
+    <div class="modal-window pixel-box wood-box surprise-window">
+      <div class="modal-header">
+        <h2 class="modal-title">🎁 กล่องสมบัตินักสำรวจ A1</h2>
+        <button id="btn-close-surprise" class="modal-close-x">[X]</button>
+      </div>
+
+      <div class="modal-body text-center">
+        <!-- Stage A: The unopened/opening Chest -->
+        <div id="surprise-chest-stage">
+          <p class="modal-subtitle">จิ้มที่กล่องสมบัติเพื่อเปิดรับพลังใจจากพี่ๆ ปีที่แล้ว! ✨</p>
+          
+          <div id="chest-clickzone" class="chest-container">
+            <svg viewBox="0 0 32 32" class="pixel-chest">
+              <!-- Glow backdrop (only active when chest opens/opened) -->
+              <g class="chest-glow">
+                <circle cx="16" cy="16" r="14" fill="#FFF59D" />
+              </g>
+              <!-- Chest Base -->
+              <g class="chest-base">
+                <!-- Outer borders and shadow -->
+                <rect x="4" y="15" width="24" height="13" fill="#2E1C0C" />
+                <!-- Wood center -->
+                <rect x="5" y="16" width="22" height="11" fill="#795548" />
+                <!-- Corner iron accents -->
+                <rect x="4" y="16" width="2" height="11" fill="#4E342E" />
+                <rect x="26" y="16" width="2" height="11" fill="#4E342E" />
+                <rect x="4" y="25" width="24" height="2" fill="#4E342E" />
+                <!-- Gold rivets/straps -->
+                <rect x="8" y="16" width="2" height="11" fill="#FFC107" />
+                <rect x="22" y="16" width="2" height="11" fill="#FFC107" />
+                <rect x="8" y="19" width="2" height="1" fill="#FFE082" />
+                <rect x="22" y="19" width="2" height="1" fill="#FFE082" />
+              </g>
+              <!-- Chest Lid -->
+              <g class="chest-lid">
+                <!-- Lid base outline -->
+                <path d="M4,7 h24 v9 h-24 z" fill="#2E1C0C" />
+                <!-- Lid wood -->
+                <rect x="5" y="8" width="22" height="7" fill="#795548" />
+                <!-- Top round outline -->
+                <rect x="6" y="6" width="20" height="2" fill="#2E1C0C" />
+                <rect x="8" y="5" width="16" height="2" fill="#2E1C0C" />
+                <!-- Top wood highlight -->
+                <rect x="8" y="7" width="16" height="1" fill="#8D6E63" />
+                <!-- Corner iron accents -->
+                <rect x="4" y="8" width="2" height="7" fill="#4E342E" />
+                <rect x="26" y="8" width="2" height="7" fill="#4E342E" />
+                <rect x="6" y="6" width="20" height="1" fill="#4E342E" />
+                <!-- Gold rivets/straps -->
+                <rect x="8" y="6" width="2" height="9" fill="#FFC107" />
+                <rect x="22" y="6" width="2" height="9" fill="#FFC107" />
+                <rect x="8" y="8" width="2" height="1" fill="#FFE082" />
+                <rect x="22" y="8" width="2" height="1" fill="#FFE082" />
+                <!-- Metal Lock plate & hole -->
+                <rect x="14" y="13" width="4" height="4" fill="#B0BEC5" />
+                <rect x="14" y="13" width="4" height="1" fill="#ECEFF1" />
+                <rect x="15" y="15" width="2" height="2" fill="#263238" />
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Stage B: The open chest layout displaying messages -->
+        <div id="surprise-messages-stage" style="display: none;">
+          <p class="modal-subtitle text-highlight">💌 ข้อความส่งต่อความอบอุ่นจากรุ่นพี่ A1 💌</p>
+          
+          <div class="senior-messages-container" id="senior-messages-list">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="justify-content: center;">
+        <button id="btn-close-surprise-footer" class="pixel-btn wood-btn" style="display: none;">ปิดหน้านี้ [X]</button>
       </div>
     </div>
   </div>
