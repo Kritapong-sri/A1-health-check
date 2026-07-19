@@ -3,7 +3,7 @@
    ========================================================================== */
 
 // Google Sheets API Web App URL (Paste your URL here after deploying Apps Script)
-const GOOGLE_SHEET_URL = "";
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyow6SDCnyzcIQTuIGLtJmJrC1ggTuD4WdnYG6-hSOtgJP-smH8tPwFinwMOsQwo2Yr/exec";
 
 // Keep track of application state
 const state = {
@@ -255,15 +255,15 @@ const MOOD_TEXTS = {
 
 function getScoreDescription(score) {
   if (score <= 20) {
-    return "พลังชีวิตต่ำเตี้ยเรี่ยดินป่า! ไหวมั้ยไอหมู (X_X)";
+    return "พลังชีวิตต่ำเตี้ยเรี่ยดินป่า! มีไรก็บอกกันน้าาา";
   } else if (score <= 40) {
-    return "เหนื่อยล้าเหมือนเดินป่าหลงทาง พักผ่อนใต้ต้นกล้วยบ้างนะ (i_i)";
+    return "เหนื่อยล้าเหมือนเดินป่าหลงทาง พักผ่อนบ้างนะ";
   } else if (score <= 60) {
     return "อยู่ในเกณฑ์ปานกลาง ป่ากว้างใหญ่แต่แกสู้ไหวแน่นอน! [v]";
   } else if (score <= 80) {
     return "เก่งมากกก มีไรก็บอก สู้ๆ ไอพวกหมูป่า A1 !! (*^-^*)";
   } else {
-    return "พลังใจเต็มเปี่ยม! แกร่งเหมือนสิงโตเจ้าป่า ไปลุยงานต่อเลย! (*o*)";
+    return "ให้เยอะ";
   }
 }
 
