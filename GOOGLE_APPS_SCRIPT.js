@@ -19,7 +19,14 @@
 
 function doPost(e) {
   try {
-    var sheet = SpreadsheetApp.openById("1Gmi4xMwkAmEr4WAF9F_aDMOHWdwkh7ElXm22XTRc_VE").getSheets()[0];
+    // ดึงชีตแรกของไฟล์ Google Sheet ปัจจุบันโดยอัตโนมัติ (แนะนำให้กดที่ส่วนขยาย > Apps Script จากในชีตของคุณเพื่อผูกกันโดยตรง)
+    var sheet;
+    try {
+      sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+    } catch (err) {
+      // หากไม่ใช่สคริปต์ที่ผูกอยู่ ให้ดึงจาก ID ชีต (กรุณาแก้ไข ID ให้ตรงกับชีตของคุณเอง)
+      sheet = SpreadsheetApp.openById("1Gmi4xMwkAmEr4WAF9F_aDMOHWdwkh7ElXm22XTRc_VE").getSheets()[0];
+    }
     
     // Check and create headers if sheet is empty
     if (sheet.getLastRow() === 0) {
