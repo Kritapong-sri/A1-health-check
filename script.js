@@ -3,7 +3,7 @@
    ========================================================================== */
 
 // Google Sheets API Web App URL (Paste your URL here after deploying Apps Script)
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyow6SDCnyzcIQTuIGLtJmJrC1ggTuD4WdnYG6-hSOtgJP-smH8tPwFinwMOsQwo2Yr/exec";
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycby2TqH6Jmqagxgp_xT-U4Oqhcag9XSr6729pGRqT2tpp76h7j9QwAaDQwvS3YZnlRUd/exec";
 
 // Keep track of application state
 const state = {
