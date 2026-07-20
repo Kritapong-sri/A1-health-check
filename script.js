@@ -263,7 +263,7 @@ function getScoreDescription(score) {
   } else if (score <= 80) {
     return "เก่งมากกก มีไรก็บอก สู้ๆ ไอพวกหมูป่า A1 !! (*^-^*)";
   } else {
-    return "ให้เยอะ";
+    return "เยอะจัด ลั่นๆที่เปิดฟ้าเลยไอหนู";
   }
 }
 
