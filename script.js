@@ -801,25 +801,33 @@ function submitQuestForm() {
 
   // Post data to Google Sheets Apps Script API
   if (GOOGLE_SHEET_URL) {
+    const payloadStr = JSON.stringify(record);
+
     fetch(GOOGLE_SHEET_URL, {
       method: "POST",
       mode: "no-cors",
       headers: {
         "Content-Type": "text/plain;charset=utf-8"
       },
-      body: JSON.stringify(record)
+      body: payloadStr
     })
       .then(() => {
         modalSuccess.classList.add('active');
       })
       .catch(err => {
         console.error("Error sending data to Google Sheet:", err);
-        modalSuccess.classList.add('active'); // Still show modal even if fetch failed so UX continues
+        modalSuccess.classList.add('active');
       })
       .finally(() => {
         btnSubmit.disabled = false;
         btnSubmit.innerHTML = originalBtnText;
       });
+
+    // Backup GET request to guarantee delivery even if POST is blocked by browser policy/extensions
+    try {
+      const backupUrl = `${GOOGLE_SHEET_URL}?data=${encodeURIComponent(payloadStr)}`;
+      fetch(backupUrl, { mode: "no-cors" }).catch(() => {});
+    } catch (e) {}
   } else {
     // If Web App URL not provided yet, fallback gracefully and show success modal
     console.warn("GOOGLE_SHEET_URL is not set. Data saved locally only.");

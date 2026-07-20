@@ -16,6 +16,18 @@
 */
 
 function doPost(e) {
+  return handleDataSubmit(e);
+}
+
+function doGet(e) {
+  // หากมีข้อมูลส่งมาทาง GET (Backup query param) ให้บันทึกข้อมูลเช่นกัน
+  if (e && e.parameter && (e.parameter.nickname || e.parameter.data || e.parameter.id)) {
+    return handleDataSubmit(e);
+  }
+  return ContentService.createTextOutput("A1 Health-Check Google Apps Script is running correctly!");
+}
+
+function handleDataSubmit(e) {
   try {
     var ss = null;
     
@@ -24,7 +36,7 @@ function doPost(e) {
       ss = SpreadsheetApp.getActiveSpreadsheet();
     } catch (err) {}
     
-    // 2. หากยังไม่ได้ ให้ลองดึงตาม ID (กรณีใส่ ID ไว้)
+    // 2. หากยังไม่ได้ ให้ลองดึงตาม ID
     if (!ss) {
       try {
         ss = SpreadsheetApp.openById("1Gmi4xMwkAmEr4WAF9F_aDMOHWdwkh7ElXm22XTRc_VE");
@@ -55,15 +67,21 @@ function doPost(e) {
       ]);
     }
     
-    // อ่านข้อมูลที่ส่งเข้ามาอย่างปลอดภัย
+    // อ่านข้อมูลที่ส่งเข้ามาอย่างปลอดภัย (รองรับทั้ง JSON string, URL params, GET data)
     var data = {};
-    if (e && e.postData && e.postData.contents) {
+    if (e && e.parameter && e.parameter.data) {
+      try {
+        data = JSON.parse(e.parameter.data);
+      } catch(err) {}
+    }
+    
+    if (!data.nickname && e && e.postData && e.postData.contents) {
       try {
         data = JSON.parse(e.postData.contents);
       } catch (err) {
         data = e.parameter || {};
       }
-    } else if (e && e.parameter) {
+    } else if (!data.nickname && e && e.parameter) {
       data = e.parameter;
     }
     
@@ -89,7 +107,4 @@ function doPost(e) {
   }
 }
 
-function doGet(e) {
-  return ContentService.createTextOutput("A1 Health-Check Google Apps Script is running correctly!");
-}
 
