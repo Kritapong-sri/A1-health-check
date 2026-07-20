@@ -2,33 +2,45 @@
   Google Apps Script for A1 Health-Check
   
   Instructions:
-  1. Open the Google Sheet: https://docs.google.com/spreadsheets/d/1Gmi4xMwkAmEr4WAF9F_aDMOHWdwkh7ElXm22XTRc_VE/edit
-  2. Click Extensions > Apps Script
-  3. Delete any default code and paste this script
-  4. Click Save (disk icon)
-  5. Click Deploy > New deployment
-  6. Select type "Web app"
-  7. Set:
-     - Description: A1 Health-Check Web App
-     - Execute as: Me (your-email)
-     - Who has access: Anyone
-  8. Click Deploy
-  9. Authorize access if prompted
-  10. Copy the Web app URL and paste it into `script.js` at the top (replace GOOGLE_SHEET_URL)
+  1. เปิดไฟล์ Google Sheet ของคุณเองที่คุณต้องการให้บันทึกข้อมูล
+  2. กดที่เมนู Extensions (ส่วนขยาย) > Apps Script
+  3. ลบโค้ดเดิมในนั้นออกทั้งหมด แล้ววางโค้ดนี้ลงไป
+  4. กด Save (ไอคอนแผ่นดิสก์)
+  5. กด Deploy (การใช้งาน) > New deployment (การสร้างการใช้งานที่นำไปใช้ได้จริง)
+  6. ตั้งค่า:
+     - Select type: Web app (เว็บแอป)
+     - Execute as: Me (ตัวฉันเอง)
+     - Who has access: Anyone (ทุกคน)
+  7. กด Deploy และทำการ Authorize access (ให้สิทธิ์การเข้าถึง)
+  8. คัดลอก Web app URL มาใส่ใน script.js (ที่ตัวแปร GOOGLE_SHEET_URL)
 */
 
 function doPost(e) {
   try {
-    // ดึงชีตแรกของไฟล์ Google Sheet ปัจจุบันโดยอัตโนมัติ (แนะนำให้กดที่ส่วนขยาย > Apps Script จากในชีตของคุณเพื่อผูกกันโดยตรง)
-    var sheet;
+    var ss = null;
+    
+    // 1. ดึงไฟล์ Google Sheet ที่ Apps Script นี้ผูกอยู่
     try {
-      sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
-    } catch (err) {
-      // หากไม่ใช่สคริปต์ที่ผูกอยู่ ให้ดึงจาก ID ชีต (กรุณาแก้ไข ID ให้ตรงกับชีตของคุณเอง)
-      sheet = SpreadsheetApp.openById("1Gmi4xMwkAmEr4WAF9F_aDMOHWdwkh7ElXm22XTRc_VE").getSheets()[0];
+      ss = SpreadsheetApp.getActiveSpreadsheet();
+    } catch (err) {}
+    
+    // 2. หากยังไม่ได้ ให้ลองดึงตาม ID (กรณีใส่ ID ไว้)
+    if (!ss) {
+      try {
+        ss = SpreadsheetApp.openById("1Gmi4xMwkAmEr4WAF9F_aDMOHWdwkh7ElXm22XTRc_VE");
+      } catch (err) {}
     }
     
-    // Check and create headers if sheet is empty
+    if (!ss) {
+      return ContentService.createTextOutput(JSON.stringify({ 
+        status: "error", 
+        message: "ไม่พบ Google Sheet กรุณาสร้าง Apps Script จากในไฟล์ Google Sheet ของคุณ (Extensions > Apps Script)" 
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+    var sheet = ss.getSheets()[0];
+    
+    // สร้าง Header หากชีตยังว่างอยู่
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
         "Timestamp ID", 
@@ -43,15 +55,25 @@ function doPost(e) {
       ]);
     }
     
-    var data = JSON.parse(e.postData.contents);
+    // อ่านข้อมูลที่ส่งเข้ามาอย่างปลอดภัย
+    var data = {};
+    if (e && e.postData && e.postData.contents) {
+      try {
+        data = JSON.parse(e.postData.contents);
+      } catch (err) {
+        data = e.parameter || {};
+      }
+    } else if (e && e.parameter) {
+      data = e.parameter;
+    }
     
-    // Append the record row
+    // เพิ่มแถวข้อมูลลงในชีต
     sheet.appendRow([
       data.id ? data.id.toString() : new Date().getTime().toString(),
-      data.date || Utilities.formatDate(new Date(), "GMT+7", "dd/MM/yyyy"),
+      data.date || Utilities.formatDate(new Date(), "GMT+7", "dd/MM/yyyy HH:mm:ss"),
       data.nickname || "Anonymous",
       data.avatar || "Default Pig",
-      data.score || 50,
+      data.score !== undefined ? data.score : 50,
       data.mood || "ok",
       data.q1 || "",
       data.q2 || "",
@@ -68,5 +90,6 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  return ContentService.createTextOutput("A1 Health-Check Google Apps Script running. Please use POST method.");
+  return ContentService.createTextOutput("A1 Health-Check Google Apps Script is running correctly!");
 }
+
