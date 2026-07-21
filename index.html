@@ -77,7 +77,10 @@
         </div>
         <h1 class="pixel-title"><span class="jungle-icon">🌿</span> A1 HEALTH QUEST <span class="jungle-icon">🌿</span>
         </h1>
-        <div class="audio-control">
+        <div class="audio-control" style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button id="btn-sheet-config" class="pixel-btn small-btn wood-btn" aria-label="Google Sheet Config">
+            <span id="sheet-status-icon">🔴</span> ชีต: <span id="sheet-status-text">ยังไม่เชื่อม</span>
+          </button>
           <button id="btn-audio-toggle" class="pixel-btn small-btn wood-btn" aria-label="Toggle Sound">
             <span id="audio-icon">🔊</span> เสียง: เปิด
           </button>
@@ -598,6 +601,52 @@
       <div class="modal-footer justify-between">
         <button id="btn-clear-history" class="pixel-btn danger-btn small-btn wood-btn">[CLEAR] ลบประวัติทั้งหมด</button>
         <button id="btn-close-history-footer" class="pixel-btn wood-btn">ปิด [X]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Google Sheet Settings -->
+  <div id="modal-sheet-config" class="modal-overlay">
+    <div class="modal-window pixel-box wood-box">
+      <div class="modal-header">
+        <h2 class="modal-title">⚙️ ตั้งค่า Google Sheet</h2>
+        <button id="btn-close-sheet-config" class="modal-close-x">[X]</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-subtitle">เชื่อมแบบประเมินกับ Google Sheet เพื่อบันทึกข้อมูลย้อนหลังเรียลไทม์</p>
+        
+        <div class="form-group" style="margin-top: 15px;">
+          <label for="input-sheet-url" class="pixel-label">Google Apps Script Web App URL:</label>
+          <input type="url" id="input-sheet-url" class="pixel-input" placeholder="https://script.google.com/macros/s/.../exec" style="font-size: 12px; width: 100%; box-sizing: border-box;">
+        </div>
+
+        <div class="config-actions" style="display: flex; gap: 10px; margin-top: 12px; margin-bottom: 15px; flex-wrap: wrap;">
+          <button id="btn-save-sheet-url" class="pixel-btn wood-btn" style="flex: 1;">💾 บันทึก URL</button>
+          <button id="btn-test-sheet-url" class="pixel-btn secondary-btn wood-btn" style="flex: 1;">🧪 ทดสอบเชื่อมต่อ</button>
+        </div>
+
+        <div id="sheet-test-result" style="display: none; padding: 10px; border-radius: 4px; font-size: 13px; margin-bottom: 15px; font-family: monospace; word-break: break-all;"></div>
+
+        <details class="instruction-box" style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; border: 1px solid #7c5c3e; color: #fff;">
+          <summary style="cursor: pointer; font-weight: bold; color: #ffd700; outline: none;">📖 วิธีเชื่อม Google Sheet ของคุณ (คลิกดูขั้นตอน)</summary>
+          <ol style="margin-top: 10px; padding-left: 20px; font-size: 13px; line-height: 1.7; color: #e2d8c3;">
+            <li>เปิดไฟล์ <strong>Google Sheet</strong> ของคุณเอง</li>
+            <li>ไปที่เมนู <strong>Extensions (ส่วนขยาย) > Apps Script</strong></li>
+            <li>ลบโค้ดเดิมทั้งหมด แล้ววางโค้ดจากไฟล์ <code>GOOGLE_APPS_SCRIPT.js</code> ลงไป</li>
+            <li>กด <strong>Save</strong> (ไอคอนแผ่นดิสก์)</li>
+            <li>กด <strong>Deploy (การใช้งาน) > New deployment (สร้างการใช้งานใหม่)</strong></li>
+            <li>เลือกประเภท: <strong>Web app (เว็บแอป)</strong>
+              <br>- Execute as: <strong>Me (ตัวฉันเอง)</strong>
+              <br>- Who has access: <strong>Anyone (ทุกคน)</strong>
+            </li>
+            <li>กด <strong>Deploy</strong> แล้วกด <strong>Authorize access (ให้สิทธิ์การเข้าถึง)</strong> ให้เรียบร้อย</li>
+            <li>คัดลอก <strong>Web app URL</strong> (ลงท้ายด้วย <code>/exec</code>) มาวางในช่องด้านบนนี้แล้วกดบันทึก!</li>
+          </ol>
+        </details>
+      </div>
+      <div class="modal-footer justify-between">
+        <button id="btn-copy-script-code" class="pixel-btn small-btn wood-btn">📋 ก๊อปปี้โค้ด Apps Script</button>
+        <button id="btn-close-sheet-config-footer" class="pixel-btn wood-btn">ปิด [X]</button>
       </div>
     </div>
   </div>

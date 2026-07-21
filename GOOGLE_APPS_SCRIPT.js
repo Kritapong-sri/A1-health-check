@@ -1,10 +1,12 @@
 /*
+  =============================================================
   Google Apps Script for A1 Health-Check
-  
-  Instructions:
-  1. เปิดไฟล์ Google Sheet ของคุณเองที่คุณต้องการให้บันทึกข้อมูล
-  2. กดที่เมนู Extensions (ส่วนขยาย) > Apps Script
-  3. ลบโค้ดเดิมในนั้นออกทั้งหมด แล้ววางโค้ดนี้ลงไป
+  =============================================================
+
+  Instructions / วิธีตั้งค่าใช้งาน:
+  1. เปิดไฟล์ Google Sheet ของคุณขึ้นมา
+  2. ไปที่เมนู Extensions (ส่วนขยาย) > Apps Script
+  3. ลบโค้ดเดิมทั้งหมดในนั้นออก แล้ววางโค้ดนี้ลงไป
   4. กด Save (ไอคอนแผ่นดิสก์)
   5. กด Deploy (การใช้งาน) > New deployment (การสร้างการใช้งานที่นำไปใช้ได้จริง)
   6. ตั้งค่า:
@@ -12,7 +14,7 @@
      - Execute as: Me (ตัวฉันเอง)
      - Who has access: Anyone (ทุกคน)
   7. กด Deploy และทำการ Authorize access (ให้สิทธิ์การเข้าถึง)
-  8. คัดลอก Web app URL มาใส่ใน script.js (ที่ตัวแปร GOOGLE_SHEET_URL)
+  8. คัดลอก Web app URL (ที่ลงท้ายด้วย /exec) มาวางในช่องตั้งค่า Google Sheet ในเว็บ A1 Health Quest
 */
 
 function doPost(e) {
@@ -20,11 +22,14 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  // หากมีข้อมูลส่งมาทาง GET (Backup query param) ให้บันทึกข้อมูลเช่นกัน
+  // หากมีข้อมูลส่งมาทาง GET (Backup query param หรือการทดสอบปิง)
   if (e && e.parameter && (e.parameter.nickname || e.parameter.data || e.parameter.id)) {
     return handleDataSubmit(e);
   }
-  return ContentService.createTextOutput("A1 Health-Check Google Apps Script is running correctly!");
+  return ContentService.createTextOutput(JSON.stringify({
+    status: "success",
+    message: "A1 Health-Check Google Apps Script is running correctly!"
+  })).setMimeType(ContentService.MimeType.JSON);
 }
 
 function handleDataSubmit(e) {
@@ -36,17 +41,10 @@ function handleDataSubmit(e) {
       ss = SpreadsheetApp.getActiveSpreadsheet();
     } catch (err) {}
     
-    // 2. หากยังไม่ได้ ให้ลองดึงตาม ID
-    if (!ss) {
-      try {
-        ss = SpreadsheetApp.openById("1Gmi4xMwkAmEr4WAF9F_aDMOHWdwkh7ElXm22XTRc_VE");
-      } catch (err) {}
-    }
-    
     if (!ss) {
       return ContentService.createTextOutput(JSON.stringify({ 
         status: "error", 
-        message: "ไม่พบ Google Sheet กรุณาสร้าง Apps Script จากในไฟล์ Google Sheet ของคุณ (Extensions > Apps Script)" 
+        message: "ไม่พบ Google Sheet! กรุณาสร้าง Apps Script จากภายในไฟล์ Google Sheet ของคุณ (ไปที่เมนู Extensions > Apps Script ในไฟล์ Google Sheet)" 
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
@@ -65,6 +63,12 @@ function handleDataSubmit(e) {
         "Quest 02 (What is needed)", 
         "Quest 03 (Mood Details / Note)"
       ]);
+      
+      // ปรับแต่งสไตล์ Header
+      var headerRange = sheet.getRange(1, 1, 1, 9);
+      headerRange.setFontWeight("bold");
+      headerRange.setBackground("#4A7C59");
+      headerRange.setFontColor("#FFFFFF");
     }
     
     // อ่านข้อมูลที่ส่งเข้ามาอย่างปลอดภัย (รองรับทั้ง JSON string, URL params, GET data)
@@ -98,13 +102,18 @@ function handleDataSubmit(e) {
       data.q3 || ""
     ]);
     
-    return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: "success",
+      message: "บันทึกข้อมูลลง Google Sheet สำเร็จ!"
+    })).setMimeType(ContentService.MimeType.JSON);
       
   } catch(error) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: "error", 
+      message: error.toString() 
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }
+
 
 
